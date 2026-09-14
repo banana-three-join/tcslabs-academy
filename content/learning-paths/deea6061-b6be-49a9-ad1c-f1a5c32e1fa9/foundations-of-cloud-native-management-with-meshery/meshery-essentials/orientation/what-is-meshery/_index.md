@@ -28,7 +28,7 @@ Keeping configuration consistent across clusters is one of the hardest problems 
 
 ### Performance
 
-Knowing whether your cluster is saturated or has headroom requires continuous benchmarking. Meshery includes a performance management system, built around [Service Mesh Performance (SMP)](https://layer5.io), that runs load tests with `mesheryctl perf apply` and stores results against named profiles for trend comparison over time.
+Knowing whether your cluster is saturated or has headroom requires continuous benchmarking. Meshery includes a performance management system, built around [Service Mesh Performance (SMP)](https://smp-spec.io), that runs load tests with `mesheryctl perf apply` and stores results against named profiles for trend comparison over time.
 
 ### Governance
 
