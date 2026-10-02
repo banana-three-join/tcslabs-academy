@@ -11,7 +11,7 @@ on:
       - 'hugo.yaml'
       - '.github/workflows/build-docs-preview.yml'
       - '.github/workflows/deploy-docs-preview.yml'
-      - '.github/workflows/docs-preview-cleanup.yml'
+      - '.github/workflows/cleanup-docs-preview.yml'
 
 permissions:
   contents: read
@@ -99,18 +99,20 @@ jobs:
           Disallow: /
           ROBOTS
 
+      # preview/ wraps pr/ and public/ so the upload has a single path. With multiple paths,
+      # upload-artifact roots at their common ancestor, so on closed events (no public/)
+      # pr/ would become the root and downstream reads of pr/* would fail.
       - name: Save PR Metadata
         run: |
-          mkdir -p ./pr
-          echo "${{ github.event.number }}" > ./pr/number
-          echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
-          echo "${{ github.event.action }}" > ./pr/action
+          mkdir -p preview/pr
+          echo "${{ github.event.number }}" > preview/pr/number
+          echo "${{ github.event.pull_request.head.sha }}" > preview/pr/sha
+          echo "${{ github.event.action }}" > preview/pr/action
+          if [ -d public ]; then mv public preview/public; fi
 
       - name: Upload build artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: docs-preview-build
-          path: |
-            ${{ github.event.action != 'closed' && 'public' || '' }}
-            pr/
+          path: preview/
           if-no-files-found: error
